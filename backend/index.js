@@ -1,13 +1,15 @@
 const express = require('express')
 const users = require('./services/users');
 const bodyParser = require('body-parser')
-//const Ajv = require('ajv').default
+const Ajv = require('ajv').default
 
 const app = express()
 const port = 3000
+const ajv = new Ajv()
+const jsonSchemaPayment = require('./schemas/jsonSchemaPayment.json')
+
 
 app.use(express.json())
-//const jsonSchemaPayment = require('./schemas/jsonSchemaPayment.json')
 
 /*
     Implementation of performing a transaction to a users account, done in 3 steps:
@@ -21,8 +23,16 @@ app.use(express.json())
 app.post('/payment', (req, res) => {
   console.log(req.body)
 
-  // VALIDATE REQUEST HERE
+  // request gets validated against schema
+  let validate = ajv.compile(jsonSchemaPayment)
+  let valid = validate(req.body)
   
+  if(valid == false) {
+    res.status(400)
+    res.send(validate.errors.map(err => err.message))
+    return
+  }
+
   let currUser = users.getUser(req.body.username,req.body.number)
   console.log(currUser)
 
