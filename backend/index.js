@@ -1,26 +1,43 @@
 const express = require('express')
 const users = require('./services/users');
+const stations = require('./services/stations')
 const bodyParser = require('body-parser')
 const Ajv = require('ajv').default
+const jwt = require('jsonwebtoken')
+const jwtStrategy = require('passport-jwt').Strategy
+const extractJwt = require('passport-jwt').ExtractJwt
+const jwtKey = require('./jwtKey.json').secret
 
 const app = express()
 const port = 3000
+const passport = require('passport')
 const ajv = new Ajv()
 const jsonSchemaPayment = require('./schemas/jsonSchemaPayment.json')
 
-
 app.use(express.json())
 
+// basic authorization for fetching JWT, this makes sure that the one authorizing the request is a real vending machine
+const BasicStrategy = require('passport-http').BasicStrategy
+
+passport.use(new BasicStrategy(
+  function(id, password, done) {
+    const station = stations.getMachine(id)
+
+    if(station == undefined) {
+      return done(null, false, { message: "FALSE: incorrect id"})
+    }
+
+    if((password === station.password) == false) {
+      return done(null, false, {message: "FALSE: incorrect password"})
+    }
+    return done(null, station)
+  }
+))
+
 /*
-    Implementation of performing a transaction to a users account, done in 3 steps:
-      1. The users request is verified against a schema making sure the request is correct
-      2. The transaction is carried out and the user is debited the transaction amount
-      3. The server returns that the transaction has been carried out.
-    
-    POSSIBLE TO DO: add verification to make sure that the one making the transaction is a 
-    legitimate vending machine.
+    MAIN API FUNCTIONALITY
 */
-app.post('/payment', (req, res) => {
+app.post('/payment', passport.authenticate('jwt', { session: false }), (req, res) => {
   console.log(req.body)
 
   // request gets validated against schema
@@ -43,24 +60,53 @@ app.post('/payment', (req, res) => {
 
   // now debit user with the set amount - done by editing user account
   creditedUser = currUser[0]
-  // //console.log(creditedUser)
-  // //console.log(parseFloat(req.body.amount))
   creditedUser.amount += parseFloat(req.body.amount)
 
-  //console.log(users.changeUser(debitedUser.id,debitedUser))
-
-  //console.log(debitedUser)
   console.log(users.getAll())
   res.status(200)
   res.send("User has been credited " + req.body.amount)
 })
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+  console.log(`Transaction API running on localhost:${port}`)
 })
 
 
-/* For vending machine verification, one possible solution would be to make the vending 
-machine GUI make a BASIC/or other login request to obtain token for later transactions, 
-this way the transactions will not be delayed by authorization constraints.
+/*
+  JWT implementation ;- this checks compares that the key is valid and not expired
 */
+let settings = {}
+
+settings.jwtFromRequest = extractJwt.fromAuthHeaderAsBearerToken();
+settings.secretOrKey = jwtKey
+passport.use(new jwtStrategy(settings, function(payload, done) {
+  const time = Date.now() / 1000
+  if(payload.exp > time) {
+    done(null, payload.user)
+  }
+  else {
+    done(null, false)
+  }
+}))
+
+// login for machines; this will run on machine launch and fetch jwt
+app.get('/stations/login', passport.authenticate('basic', { session: false}), (req,res) => {
+  console.log(req.user)
+  const body = {
+    id: req.user.id,
+    password: req.user.password
+  }
+  const contents = {
+    user: body
+  }
+  const settings = {
+    expiresIn: '2d'
+  }
+
+  const id = req.user.id
+
+  //create JWT and send it back with the response
+  const token = jwt.sign(contents, jwtKey, settings)
+
+  return res.json({ token, id})
+})
