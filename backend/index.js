@@ -34,7 +34,7 @@ app.post('/payment', (req, res) => {
   }
 
   let currUser = users.getUser(req.body.username,req.body.number)
-  console.log(currUser)
+  //console.log(currUser)
 
   // check that user is good
   if(currUser.length == 0) {
@@ -51,7 +51,8 @@ app.post('/payment', (req, res) => {
 
   //console.log(debitedUser)
   console.log(users.getAll())
-  res.send("gaming")
+  res.status(200)
+  res.send("User has been credited " + req.body.amount)
 })
 
 app.listen(port, () => {
