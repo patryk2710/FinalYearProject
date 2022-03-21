@@ -1,9 +1,12 @@
 const express = require('express')
 const users = require('./services/users');
+const bodyParser = require('body-parser')
 //const Ajv = require('ajv').default
 
 const app = express()
 const port = 3000
+
+app.use(express.json())
 //const jsonSchemaPayment = require('./schemas/jsonSchemaPayment.json')
 
 /*
@@ -16,7 +19,29 @@ const port = 3000
     legitimate vending machine.
 */
 app.post('/payment', (req, res) => {
-  res.send('Hello World!')
+  console.log(req.body)
+
+  // VALIDATE REQUEST HERE
+  
+  let currUser = users.getUser(req.body.username,req.body.number)
+  console.log(currUser)
+
+  // check that user is good
+  if(currUser.length == 0) {
+    return res.sendStatus(400)
+  }
+
+  // now debit user with the set amount - done by editing user account
+  creditedUser = currUser[0]
+  // //console.log(creditedUser)
+  // //console.log(parseFloat(req.body.amount))
+  creditedUser.amount += parseFloat(req.body.amount)
+
+  //console.log(users.changeUser(debitedUser.id,debitedUser))
+
+  //console.log(debitedUser)
+  console.log(users.getAll())
+  res.send("gaming")
 })
 
 app.listen(port, () => {
