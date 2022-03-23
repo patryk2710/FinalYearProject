@@ -1,5 +1,7 @@
+import json
 import tkinter
 from tkinter import ttk
+import requests
 
 
 def processTransaction():
@@ -8,6 +10,27 @@ def processTransaction():
     print(nameInput.get())
     print(numberInput.get())
     print(myMachine.get_JWT())
+    # request the api to complete the transaction
+    # post @ http://192.168.*:3000/payment, with jwt, username, number and amount
+    url = ""
+    token = "Bearer " + myMachine.get_JWT()
+    post_headers = {"Authorization": token, "Content-Type": "application/json"}
+    post_content = {
+        'username': nameInput.get(),
+        'number': numberInput.get(),
+        'amount': totalMoney
+    }
+
+    print(type(post_content))
+    print(post_content)
+    response = requests.post(url, json=post_content, headers=post_headers)
+    print(response.content)
+    if response.ok:
+        # send to success screen
+        print("Worked!!!")
+    else:
+        # add box saying it failed
+        print("didn't work :(")
 
 
 def layout(inputFrame, moneyTotal, thisMachine):
