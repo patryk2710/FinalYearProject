@@ -4,9 +4,8 @@ import tkinter
 from tkinter import ttk
 from PIL import Image, ImageTk
 import inputScreen
+import machine
 import numpy as np
-from matplotlib import pyplot as plt
-from matplotlib import image as image
 
 
 # this draws the initial screen for beginning interaction
@@ -27,13 +26,27 @@ def firstScreen():
 # send user to screen for inputting bottles and cans
 def inputs():
     startFrame.destroy()
-    inputScreen.layout(inputFrame, root)
+    inputScreen.layout(inputFrame, root, thisMachine)
     inputFrame.pack()
+
+
+# fetch this machines JWT
+def fetchJWT():
+    jwt = "gregregregreig9843g4387gh437gh34g"
+    #
+    #  HERE FETCH JWT FROM API
+    url = "localhost:3000"
+
+    return jwt
 
 
 # main starter code
 if __name__ == '__main__':
     root = tkinter.Tk()
+
+    jwt = fetchJWT()
+
+    thisMachine = machine.Machine(jwt) # create a machine class, this holds JWT and detector model
 
     s = ttk.Style()
     s.theme_use('winnative')

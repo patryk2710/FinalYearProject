@@ -3,16 +3,20 @@ from tkinter import ttk
 
 
 def processTransaction():
+    # VALIDATE ENTRIES i.e. if number and string
     print(totalMoney)
     print(nameInput.get())
     print(numberInput.get())
+    print(myMachine.get_JWT())
 
 
-def layout(inputFrame, moneyTotal):
+def layout(inputFrame, moneyTotal, thisMachine):
     global totalMoney
     global nameInput
     global numberInput
+    global myMachine
 
+    myMachine = thisMachine
     totalMoney = moneyTotal
     moneyString = "Total is: €" + str(moneyTotal)
 
@@ -20,7 +24,7 @@ def layout(inputFrame, moneyTotal):
     promptLabel = tkinter.Label(inputFrame, text="Please now enter transaction details:", background='white', font=("Helvetica", 50))
     nameLabel = tkinter.Label(inputFrame, text="Name: ", background='white', font=("Helvetica", 50))
     numberLabel = tkinter.Label(inputFrame, text="Phone number: ", background='white', font=("Helvetica", 50))
-    nameInput = tkinter.Entry(inputFrame, borderwidth=3, width=25, font=("Helvetica", 30))
+    nameInput = tkinter.Entry(inputFrame, borderwidth=3, width=25, font=("Helvetica", 30), exportselection=False, )
     numberInput = tkinter.Entry(inputFrame, borderwidth=3, width=25, font=("Helvetica", 30))
     finishButton = tkinter.Button(inputFrame, text="Complete transaction!", padx=65, pady=35, command=processTransaction, font=("Helvetica", 50))
     bufferY = tkinter.Label(inputFrame, text="", background='white', pady=50)

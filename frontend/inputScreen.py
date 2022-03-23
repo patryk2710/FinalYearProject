@@ -39,13 +39,16 @@ def addBottles():
 def loginPage():
     loginFrame = tkinter.Frame(rootFrame, height=900, width=1600, background='white')
     thisFrame.destroy()
-    loginScreen.layout(loginFrame, moneyTotal)
+    loginScreen.layout(loginFrame, moneyTotal, myMachine)
     loginFrame.pack()
 
 
 # this function loads the layout for the frame
-def layout(inputFrame, root):
+def layout(inputFrame, root, thisMachine):
     loadImages() # load images in
+
+    global myMachine
+    myMachine = thisMachine
 
     # global variables, for being visible to other functions
     global thisFrame
