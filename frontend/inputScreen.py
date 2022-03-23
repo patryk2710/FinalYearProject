@@ -38,8 +38,8 @@ def addBottles():
 # user clicked finish, send to login page - pass amount of money as argument
 def loginPage():
     loginFrame = tkinter.Frame(rootFrame, height=900, width=1600, background='white')
-    thisFrame.pack_forget()
-    loginScreen.layout(loginFrame)
+    thisFrame.destroy()
+    loginScreen.layout(loginFrame, moneyTotal)
     loginFrame.pack()
 
 

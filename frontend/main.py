@@ -26,7 +26,7 @@ def firstScreen():
 
 # send user to screen for inputting bottles and cans
 def inputs():
-    startFrame.pack_forget()
+    startFrame.destroy()
     inputScreen.layout(inputFrame, root)
     inputFrame.pack()
 
