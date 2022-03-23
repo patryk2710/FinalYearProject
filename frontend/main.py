@@ -4,7 +4,9 @@ import tkinter
 import json
 from tkinter import ttk
 from PIL import Image, ImageTk
+import time
 import inputScreen
+import loginScreen
 import machine
 import requests
 from requests.auth import HTTPBasicAuth
@@ -14,6 +16,8 @@ import numpy as np
 # this draws the initial screen for beginning interaction
 def firstScreen():
     global startButtonImage
+    global startFrame
+    startFrame = tkinter.Frame(root, height=900, width=1600, background='white')
     startButtonImage = Image.open('assets/start.png')
     startButtonImage = ImageTk.PhotoImage(startButtonImage)
 
@@ -27,16 +31,41 @@ def firstScreen():
     startFrame.pack()
 
 
-# send user to screen for inputting bottles and cans
+# send user to screen for inputting bottles and cans - also loop back around
 def inputs():
-    startFrame.destroy()
-    inputScreen.layout(inputFrame, root, thisMachine)
-    inputFrame.pack()
+    startFrame.pack_forget()  # hide but not delete first screen
+    inputObj = inputScreen.inputScreen(thisMachine, root)  # create object for input page
+    frame = inputObj.layout()  # draw input screen
+    frame.pack()
+    root.wait_window(frame)  # wait until this is deleted
+
+    print(inputObj.getmoneyTotal())
+    loginFrame = inputObj.getLoginFrame()
+    moneyTotal = inputObj.getmoneyTotal()
+
+    loginObj = loginScreen.loginScreen(thisMachine, root, loginFrame, moneyTotal)  # create object for login page
+    frame2 = loginObj.layout()  # draw login page
+    frame2.pack()
+
+    root.wait_window(frame2)  # wait until login page is deleted
+    text = loginObj.getText()  # get api response
+    print(text)
+    finalframe = loginObj.finalPage(text)  # call funtion to generate last page
+    finalframe.pack()  # draw last page
+
+    # waiting 3000 milliseconds
+    var = tkinter.IntVar()
+    root.after(3000, var.set, 1)
+    print("waiting in finalpage")
+    root.wait_variable(var)
+    finalframe.destroy()  # delete last page
+
+    startFrame.pack()  # show the first screen back, allowing to restart the cycle
 
 
 # fetch this machines JWT
 def fetchJWT():
-    url = ""  # url to fetch
+    url = "http://192.168:3000/stations/login"  # url to fetch http://192.168.*:3000/stations/login
     username = "b8cd3d55-c3bc-4f19-b3f9-3d3f92d192d4"  # this machines username
     password = "$2a$12$LQf4l7AItghSghQjZVK6DOuZoW0nFcmYhHLS2gNxz45At4str6KIi"  # this machines password
     response = requests.get(url, auth=HTTPBasicAuth(username, password))  # fetch using HTTPBasicAuth
@@ -47,6 +76,7 @@ def fetchJWT():
 
 # main starter code
 if __name__ == '__main__':
+    global root
     root = tkinter.Tk()
 
     jwt = fetchJWT()
@@ -55,13 +85,9 @@ if __name__ == '__main__':
 
     s = ttk.Style()
     s.theme_use('winnative')
-
-    startFrame = tkinter.Frame(root, height=900, width=1600, background='white')
-    inputFrame = tkinter.Frame(root, height=900, width=1600, background='white')
-
-    firstScreen()
-
     root.wm_geometry("1600x900")
     root.configure(background="white")
     root.title("Reverse Vending Machine")
+    firstScreen()
+
     root.mainloop()
