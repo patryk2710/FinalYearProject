@@ -2,6 +2,8 @@ import tkinter
 from tkinter import ttk
 from PIL import Image, ImageTk
 import loginScreen
+import cv2
+import numpy as np
 
 
 class inputScreen:
@@ -54,12 +56,35 @@ class inputScreen:
 
     def addBottles(self):
         # here there will be opencv code to run checker
+        image = cv2.imread('assets/bottle04.jpg')  # CHANGE THIS TO TAKING A PICTURE
 
-        self._bottleVal += 1
-        self._moneyTotal += 0.25
+        blob = cv2.dnn.blobFromImage(image, 1/255.0, (416, 416), swapRB=True, crop=False)
+        net = self._machine.get_net()
+        ln = self._machine.get_layerNames()
 
-        self._totalLabel.config(text=self._moneyTotal)
-        self._bottleCounter.config(text=self._bottleVal)
+        net.setInput(blob)
+        layerOutputs = net.forward(ln)
+
+        classIDs = []
+        classes = self._machine.get_classes()
+
+        for output in layerOutputs:
+            for detection in output:
+                scores = detection[5:]
+                classID = np.argmax(scores)
+                confidence = scores[classID]
+
+                if confidence > 0.85:
+                    classIDs.append(classID)
+
+        mostLikelyItem = classes[classIDs[0]]
+        if mostLikelyItem == "bottle":
+            print("is bottle")
+            self._moneyTotal += 0.25
+            self._bottleVal += 1
+
+            self._totalLabel.config(text=self._moneyTotal)
+            self._bottleCounter.config(text=self._bottleVal)
 
     def loginPage(self):
         self._loginFrame = tkinter.Frame(self._root, height=900, width=1600, background='white')

@@ -74,14 +74,27 @@ def fetchJWT():
     return jwt
 
 
+def createDNNnetwork():
+    net = cv2.dnn.readNetFromDarknet('assets/yolo/yolov3.cfg', 'assets/yolo/yolov3.weights')
+    net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
+
+    ln = net.getLayerNames()
+    ln = [ln[i - 1] for i in net.getUnconnectedOutLayers()]
+
+    return net, ln
+
+
 # main starter code
 if __name__ == '__main__':
     global root
     root = tkinter.Tk()
+    classes = open('assets/yolo/coco.names').read().strip().split('\n')
 
     jwt = fetchJWT()
 
-    thisMachine = machine.Machine(jwt)  # create a machine class, this holds JWT and detector model
+    network = createDNNnetwork()
+
+    thisMachine = machine.Machine(jwt, network[0], network[1], classes)  # create a machine class
 
     s = ttk.Style()
     s.theme_use('winnative')
