@@ -60,6 +60,7 @@ class inputScreen:
         # here there will be opencv code to run checker
         # image = cv2.imread('assets/bottle04.jpg')  # CHANGE THIS TO TAKING A PICTURE
         camera = cv2.VideoCapture(0)  # grab the camera
+        camera.read()  # skip first frame
         (check, image) = camera.read()
 
         # works with bottle
