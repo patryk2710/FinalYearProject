@@ -42,7 +42,7 @@ class loginScreen:
         # VALIDATE ENTRIES i.e. if number and string
         # request the api to complete the transaction
         # post @ http://192.168.*:3000/payment, with jwt, username, number and amount
-        url = "http://192.168:3000/payment"
+        url = "http://192.168.1.84:3000/payment"
         token = "Bearer " + self._machine.get_JWT()
         post_headers = {"Authorization": token, "Content-Type": "application/json"}
         post_content = {

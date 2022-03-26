@@ -65,7 +65,7 @@ def inputs():
 
 # fetch this machines JWT
 def fetchJWT():
-    url = "http://192.168:3000/stations/login"  # url to fetch http://192.168.*:3000/stations/login
+    url = "http://192.168.1.84:3000/stations/login"  # url to fetch http://192.168.*:3000/stations/login
     username = "b8cd3d55-c3bc-4f19-b3f9-3d3f92d192d4"  # this machines username
     password = "$2a$12$LQf4l7AItghSghQjZVK6DOuZoW0nFcmYhHLS2gNxz45At4str6KIi"  # this machines password
     response = requests.get(url, auth=HTTPBasicAuth(username, password))  # fetch using HTTPBasicAuth

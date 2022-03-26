@@ -31,8 +31,10 @@ class inputScreen:
         canCounter = tkinter.Label(self._inputFrame, text="0", background='white', font=("Helvetica", 40))
         bufferX = tkinter.Label(self._inputFrame, text=" ", background='white', padx=200)
         bufferY = tkinter.Label(self._inputFrame, text=" ", background='white', pady=80)
-        addBottle = tkinter.Button(self._inputFrame, text="Check Inserted Item!", padx=50, pady=25, command=self.addBottles)
-        finishButton = tkinter.Button(self._inputFrame, text="Finish Inserting", padx=50, pady=25, command=self.loginPage)
+        addBottle = tkinter.Button(self._inputFrame, text="Check Inserted Item!", padx=50, pady=25,
+                                   command=self.addBottles)
+        finishButton = tkinter.Button(self._inputFrame, text="Finish Inserting", padx=50, pady=25,
+                                      command=self.loginPage)
 
         # draw the items on a grid
         bufferY.grid(row=0, column=1)
@@ -56,9 +58,13 @@ class inputScreen:
 
     def addBottles(self):
         # here there will be opencv code to run checker
-        image = cv2.imread('assets/bottle04.jpg')  # CHANGE THIS TO TAKING A PICTURE
+        # image = cv2.imread('assets/bottle04.jpg')  # CHANGE THIS TO TAKING A PICTURE
+        camera = cv2.VideoCapture(0)  # grab the camera
+        (check, image) = camera.read()
 
-        blob = cv2.dnn.blobFromImage(image, 1/255.0, (416, 416), swapRB=True, crop=False)
+        # works with bottle
+
+        blob = cv2.dnn.blobFromImage(image, 1 / 255.0, (416, 416), swapRB=True, crop=False)
         net = self._machine.get_net()
         ln = self._machine.get_layerNames()
 
@@ -77,6 +83,12 @@ class inputScreen:
                 if confidence > 0.85:
                     classIDs.append(classID)
 
+        print(type(classIDs))
+        if not classIDs:
+            classIDs.append(1)
+
+        print(classIDs)
+
         mostLikelyItem = classes[classIDs[0]]
         if mostLikelyItem == "bottle":
             print("is bottle")
@@ -85,6 +97,9 @@ class inputScreen:
 
             self._totalLabel.config(text=self._moneyTotal)
             self._bottleCounter.config(text=self._bottleVal)
+        else:
+            print("not a bottle")
+        camera.release()
 
     def loginPage(self):
         self._loginFrame = tkinter.Frame(self._root, height=900, width=1600, background='white')
