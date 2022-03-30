@@ -15,13 +15,13 @@ class loginScreen:
         self._nameInput = tkinter.Entry(self._loginFrame, borderwidth=3, width=25, font=("Helvetica", 30), exportselection=False, )
         self._numberInput = tkinter.Entry(self._loginFrame, borderwidth=3, width=25, font=("Helvetica", 30))
         # self._finalFrame = tkinter.Frame(self._root, height=900, width=1600, background='white')
+        self._promptLabel = tkinter.Label(self._loginFrame, text="Please now enter transaction details:", background='white', font=("Helvetica", 50))
         self._text = ""
 
     def layout(self):
         moneyString = "Total is: €" + str(self._moneyTotal)
 
         totalLabel = tkinter.Label(self._loginFrame, text=moneyString, background='white', font=("Helvetica", 50))
-        promptLabel = tkinter.Label(self._loginFrame, text="Please now enter transaction details:", background='white', font=("Helvetica", 50))
         nameLabel = tkinter.Label(self._loginFrame, text="Name: ", background='white', font=("Helvetica", 50))
         numberLabel = tkinter.Label(self._loginFrame, text="Phone number: ", background='white', font=("Helvetica", 50))
         finishButton = tkinter.Button(self._loginFrame, text="Complete transaction!", padx=65, pady=35, command=self.processTransaction, font=("Helvetica", 50))
@@ -29,7 +29,7 @@ class loginScreen:
 
         bufferY.grid(row=0, column=1)
         totalLabel.grid(row=1, column=0, columnspan=3)
-        promptLabel.grid(row=2, column=0, columnspan=3, pady=(10, 35))
+        self._promptLabel.grid(row=2, column=0, columnspan=3, pady=(10, 35))
         nameLabel.grid(row=3, column=0)
         numberLabel.grid(row=4, column=0)
         self._nameInput.grid(row=3, column=2)
@@ -62,6 +62,9 @@ class loginScreen:
         else:
             # add box saying it failed
             print("didn't work :(")
+            # change prompt label
+            self._promptLabel.config(text="User not found, please check your details", fg="red")
+
 
     def getText(self):
         return self._text
