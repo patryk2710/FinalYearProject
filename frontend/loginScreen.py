@@ -40,31 +40,39 @@ class loginScreen:
 
     def processTransaction(self):
         # VALIDATE ENTRIES i.e. if number and string
-        # request the api to complete the transaction
-        # post @ http://192.168.*:3000/payment, with jwt, username, number and amount
-        url = "http://192.168.1.84:3000/payment"
-        token = "Bearer " + self._machine.get_JWT()
-        post_headers = {"Authorization": token, "Content-Type": "application/json"}
-        post_content = {
-            'username': self._nameInput.get(),
-            'number': self._numberInput.get(),
-            'amount': self._moneyTotal
-        }
+        name = self._nameInput.get()
+        num = self._numberInput.get()
+        name = name.replace(" ", "")
+        isString = name.isalpha()
+        isNumber = num.isdigit()
+        if isNumber and isString:
+            print("all good")
+            # post @ http://192.168.*:3000/payment, with jwt, username, number and amount
+            url = "http://192.168.1.84:3000/payment"
+            token = "Bearer " + self._machine.get_JWT()
+            post_headers = {"Authorization": token, "Content-Type": "application/json"}
+            post_content = {
+                'username': self._nameInput.get(),
+                'number': self._numberInput.get(),
+                'amount': self._moneyTotal
+            }
 
-        response = requests.post(url, json=post_content, headers=post_headers)
+            response = requests.post(url, json=post_content, headers=post_headers)
 
-        if response.ok:
-            # send to success screen
-            print("Worked!!!")
+            if response.ok:
+                # send to success screen
+                print("Worked!!!")
 
-            self._text = response.text
-            self._loginFrame.destroy()
+                self._text = response.text
+                self._loginFrame.destroy()
+            else:
+                # add box saying it failed
+                print("didn't work :(")
+                # change prompt label
+                self._promptLabel.config(text="User not found, please check your details", fg="red", font=("Helvetica", 50))
         else:
-            # add box saying it failed
-            print("didn't work :(")
-            # change prompt label
-            self._promptLabel.config(text="User not found, please check your details", fg="red")
-
+            print("not correct")
+            self._promptLabel.config(text="Please only include letters in the name and numbers in the number", fg="red", font=("Helvetica", 40))
 
     def getText(self):
         return self._text
