@@ -1,12 +1,15 @@
 const express = require('express')
 const users = require('./services/users');
 const stations = require('./services/stations')
+const config = require('./services/firebase');
 const bodyParser = require('body-parser')
 const Ajv = require('ajv').default
 const jwt = require('jsonwebtoken')
 const jwtStrategy = require('passport-jwt').Strategy
 const extractJwt = require('passport-jwt').ExtractJwt
 const jwtKey = require('./jwtKey.json').secret
+const firebase = require('firebase/app')
+const database = require('firebase/database')
 
 const app = express()
 const port = 3000
@@ -15,6 +18,11 @@ const ajv = new Ajv()
 const jsonSchemaPayment = require('./schemas/jsonSchemaPayment.json')
 
 app.use(express.json())
+
+// load firebase config
+firebaseConfig = config.getConfig()
+const wth = firebase.initializeApp(firebaseConfig)
+const db = database.getDatabase();
 
 // basic authorization for fetching JWT, this makes sure that the one authorizing the request is a real vending machine
 const BasicStrategy = require('passport-http').BasicStrategy
@@ -61,6 +69,23 @@ app.post('/payment', passport.authenticate('jwt', { session: false }), (req, res
   // now debit user with the set amount - done by editing user account
   creditedUser = currUser[0]
   creditedUser.amount += parseFloat(req.body.amount)
+
+  // get time for storing the log
+  let now = new Date 
+  console.log(now)
+  console.log(now.toLocaleString())
+  now = now.toLocaleString()
+  now = now.replace(", ", ":")
+  now = now.replace("/","-")
+  now = now.replace("/","-")
+  now = "LogT" + now
+  console.log(now)
+  // log completed transaction
+  database.set(database.ref(db, now), {
+    creditor: req.body.username,
+    creditphoneno: req.body.number,
+    amount: req.body.amount
+  })
 
   console.log(users.getAll())
   res.status(200)
