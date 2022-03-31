@@ -7,12 +7,11 @@ const Ajv = require('ajv').default
 const jwt = require('jsonwebtoken')
 const jwtStrategy = require('passport-jwt').Strategy
 const extractJwt = require('passport-jwt').ExtractJwt
-const jwtKey = require('./jwtKey.json').secret
 const firebase = require('firebase/app')
 const database = require('firebase/database')
 
 const app = express()
-const port = 3000
+const port = process.env.PORT || 3000
 const passport = require('passport')
 const ajv = new Ajv()
 const jsonSchemaPayment = require('./schemas/jsonSchemaPayment.json')
@@ -101,6 +100,13 @@ app.listen(port, () => {
   JWT implementation ;- this checks compares that the key is valid and not expired
 */
 let settings = {}
+let jwtKey = null
+
+if(process.env.JWTKEY === undefined) {
+  jwtKey = require('./jwtKey.json').secret
+} else {
+  jwtKey = process.env.JWTKEY
+}
 
 settings.jwtFromRequest = extractJwt.fromAuthHeaderAsBearerToken();
 settings.secretOrKey = jwtKey
