@@ -47,8 +47,8 @@ class loginScreen:
         isNumber = num.isdigit()
         if isNumber and isString:
             print("all good")
-            # post @ http://192.168.*:3000/payment, with jwt, username, number and amount
-            url = "http://192.168.1.84:3000/payment"
+            # post @ https://c18437596-fyp-api.herokuapp.com/payment, with jwt, username, number and amount
+            url = "https://c18437596-fyp-api.herokuapp.com/payment"
             token = "Bearer " + self._machine.get_JWT()
             post_headers = {"Authorization": token, "Content-Type": "application/json"}
             post_content = {
