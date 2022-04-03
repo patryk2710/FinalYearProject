@@ -28,7 +28,7 @@
       "minLength": 10,
       "maxLength": 10,
       "examples": [
-        "John Smith"
+        "0851234567"
       ]
     },
     "amount": {
