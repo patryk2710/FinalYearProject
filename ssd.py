@@ -1,4 +1,3 @@
-# This is a sample Python script.
 import numpy as np
 import tensorflow as tf
 import cv2
@@ -17,8 +16,6 @@ for file in os.listdir('assets/'):
         images.append(image)
         imageName.append(file)
 
-print(len(images))
-
 # kernel = np.ones((5,5),np.float32)/25
 
 i = 0
@@ -29,7 +26,7 @@ for image in images:
 
     # adding filtering increases accuracy, (gaussian blur goes up to 74, averaging goes up to 76, median to 77)
     # filtered = cv2.GaussianBlur(CClockwiseImage, (5, 5), 0) # gaussian
-    filtered = cv2.medianBlur(CClockwiseImage, 5) # median
+    filtered = cv2.medianBlur(CClockwiseImage, 5)  # median
     # filtered = cv2.filter2D(src=CClockwiseImage, ddepth=-1, kernel=kernel) # averaging
 
     blob = cv2.dnn.blobFromImage(filtered, size=(300, 300), swapRB=True, crop=False)
@@ -60,6 +57,7 @@ endTime = time.time()
 
 # here analyse results
 percentCorrect = (results.count('Correct')/len(images)) * 100
-print("Correct: " + str(results.count('Correct')) + " out of " + str(len(images)) + " (" + "{:.3f}".format(percentCorrect) + "%)")
+print("Correct: " + str(results.count('Correct')) + " out of " + str(len(images)) +
+      " (" + "{:.3f}".format(percentCorrect) + "%)")
 print("Non bottle object correctly ignored: " + str(results.count('FCorrect')))
 print("Single Shot Detector took {:.6f} seconds to run ".format(endTime - startTime) + str(len(images)) + " images.")
