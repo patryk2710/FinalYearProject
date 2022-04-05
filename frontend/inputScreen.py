@@ -24,6 +24,7 @@ class inputScreen:
                                         font=("Helvetica", 25), fg="red", background='white')
         self._loginFrame = ""
         self._camera = cv2.VideoCapture(1)  # grab the camera
+        self._kernel = np.ones((5,5),np.float32)/25
 
     def layout(self):
         self.loadImages()  # load images in
@@ -68,8 +69,9 @@ class inputScreen:
         # works with bottle
         (check, image) = self._camera.read()
 
-        # rotate image for recognition - 90 deg clockwise
+        # rotate image for recognition - 90 deg clockwise + add filter
         image = cv2.rotate(image, cv2.ROTATE_90_COUNTERCLOCKWISE)
+        image = cv2.filter2D(src=image, ddepth=-1, kernel=self._kernel)  # averaging
 
         blob = cv2.dnn.blobFromImage(image, 1 / 255.0, (416, 416), swapRB=True, crop=False)
         net = self._machine.get_net()
@@ -87,7 +89,7 @@ class inputScreen:
                 classID = np.argmax(scores)
                 confidence = scores[classID]
 
-                if confidence > 0.85:
+                if confidence > 0.7:
                     classIDs.append(classID)
 
         print(type(classIDs))

@@ -76,7 +76,6 @@ def fetchJWT():
 
 def createDNNnetwork():
     net = cv2.dnn.readNetFromDarknet('assets/yolo/yolov3.cfg', 'assets/yolo/yolov3.weights')
-    net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
 
     ln = net.getLayerNames()
     ln = [ln[i - 1] for i in net.getUnconnectedOutLayers()]
