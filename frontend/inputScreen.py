@@ -89,7 +89,7 @@ class inputScreen:
                 classID = np.argmax(scores)
                 confidence = scores[classID]
 
-                if confidence > 0.85:
+                if confidence > 0.7:
                     classIDs.append(classID)
 
         print(type(classIDs))
