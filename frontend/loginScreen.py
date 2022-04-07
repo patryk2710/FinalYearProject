@@ -12,9 +12,8 @@ class loginScreen:
         self._root = root
         self._moneyTotal = moneyTotal
         self._loginFrame = loginFrame
-        self._nameInput = tkinter.Entry(self._loginFrame, borderwidth=3, width=25, font=("Helvetica", 30), exportselection=False, )
+        self._nameInput = tkinter.Entry(self._loginFrame, borderwidth=3, width=25, font=("Helvetica", 30))
         self._numberInput = tkinter.Entry(self._loginFrame, borderwidth=3, width=25, font=("Helvetica", 30))
-        # self._finalFrame = tkinter.Frame(self._root, height=900, width=1600, background='white')
         self._promptLabel = tkinter.Label(self._loginFrame, text="Please now enter transaction details:", background='white', font=("Helvetica", 50))
         self._text = ""
 
@@ -24,7 +23,7 @@ class loginScreen:
         totalLabel = tkinter.Label(self._loginFrame, text=moneyString, background='white', font=("Helvetica", 50))
         nameLabel = tkinter.Label(self._loginFrame, text="Name: ", background='white', font=("Helvetica", 50))
         numberLabel = tkinter.Label(self._loginFrame, text="Phone number: ", background='white', font=("Helvetica", 50))
-        finishButton = tkinter.Button(self._loginFrame, text="Complete transaction!", padx=65, pady=35, command=self.processTransaction, font=("Helvetica", 50))
+        finishButton = tkinter.Button(self._loginFrame, text="Complete transaction!", padx=65, pady=35, command=self.userConfirm, font=("Helvetica", 50))
         bufferY = tkinter.Label(self._loginFrame, text="", background='white', pady=50)
 
         bufferY.grid(row=0, column=1)
@@ -38,7 +37,22 @@ class loginScreen:
 
         return self._loginFrame
 
-    def processTransaction(self):
+    def userConfirm(self):
+        confirmationFrame = tkinter.Frame(self._loginFrame, height=550, width=1200, background='#d9d8d4')
+
+        confirmationFrame.place(relx=0.5, rely=0.5, anchor=tkinter.CENTER, bordermode='outside')
+        confirmationLabel = tkinter.Label(confirmationFrame, text="Are you sure you want to use these login details?",
+                                          font=("Helvetica", 30), background='#d9d8d4')
+        confirmationButton = tkinter.Button(confirmationFrame, text="Yes", background="#a6edb1", padx=50, pady=25,
+                                            command=lambda: self.processTransaction(confirmationFrame), font=("Helvetica", 35))
+        cancelButton = tkinter.Button(confirmationFrame, text="No", background="#f25757", padx=50, pady=25,
+                                            command=lambda: confirmationFrame.place_forget(), font=("Helvetica", 35))
+        confirmationLabel.grid(row=0, column=0, columnspan=2)
+        confirmationButton.grid(row=1, column=0)
+        cancelButton.grid(row=1, column=1)
+
+    def processTransaction(self, confirmFrame):
+        confirmFrame.place_forget()
         # VALIDATE ENTRIES i.e. if number and string
         name = self._nameInput.get()
         num = self._numberInput.get()
