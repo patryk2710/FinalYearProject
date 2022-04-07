@@ -18,9 +18,10 @@ class inputScreen:
         self._bottleVal = 0
         self._bottleCounter = tkinter.Label(self._inputFrame, text="0", background='white', font=("Helvetica", 40))
         self._totalLabel = tkinter.Label(self._inputFrame, text="0.00", background='white', font=("Helvetica", 50))
+        self._whatWasInserted = tkinter.Label(self._inputFrame, text="", background='white', font=("Helvetica", 25))
         self._emptyLabel = tkinter.Label(self._inputFrame, text="Please enter at least 1 container", background='white', font=("Helvetica", 35), fg="red")
         self._notabottleLabel = tkinter.Label(self._inputFrame,
-                                        text="Not a valid item, please take it out and enter a valid bottle or can",
+                                        text="Not a valid item, please input a valid bottle or move it slightly and try again",
                                         font=("Helvetica", 25), fg="red", background='white')
         self._loginFrame = ""
         self._camera = cv2.VideoCapture(1)  # grab the camera
@@ -63,8 +64,7 @@ class inputScreen:
         self._canLabelImage = ImageTk.PhotoImage(self._canLabelImage)
 
     def addBottles(self):
-        # here there will be opencv code to run checker
-        # image = cv2.imread('assets/bottle04.jpg')  # CHANGE THIS TO TAKING A PICTURE
+        # here there is opencv code to run bottle checker
 
         # works with bottle
         (check, image) = self._camera.read()
@@ -81,7 +81,8 @@ class inputScreen:
         layerOutputs = net.forward(ln)
 
         classIDs = []
-        classes = self._machine.get_classes()
+        confScores = []
+        heights = []
 
         for output in layerOutputs:
             for detection in output:
@@ -90,27 +91,45 @@ class inputScreen:
                 confidence = scores[classID]
 
                 if confidence > 0.7:
-                    classIDs.append(classID)
+                    if classID == 39:
+                        classIDs.append(classID)
+                        confScores.append(confidence)
+                        thisBox = detection[0:4] * np.array([480, 640, 480, 640])
+                        height = thisBox[3].astype("int")
+                        heights.append(height)
 
-        print(type(classIDs))
         if not classIDs:
             classIDs.append(1)
+            confScores.append(0.9999)
+            heights.append(500)
 
-        print(classIDs)
-
-        mostLikelyItem = classes[classIDs[0]]
-        if mostLikelyItem == "bottle":
-            print("is bottle")
-            self._emptyLabel.place_forget()
+        # here have to only get the largest in the
+        highestConfIndex = np.argmax(confScores)
+        mostLikelyItem = classIDs[highestConfIndex]
+        mostLikelyHeight = heights[highestConfIndex]
+        self._emptyLabel.place_forget()
+        if mostLikelyItem == 39:
             self._notabottleLabel.place_forget()
-            self._moneyTotal += 0.25
-            self._bottleVal += 1
+            # here check length of bottle to determine size (small bottles are around 270-300)
+            print(mostLikelyHeight)
+            if mostLikelyHeight < 310:
+                print("small bottle")
+                item = "Small Bottle worth 25c"
+                self._moneyTotal += 0.25
+            else:
+                print("large bottle")
+                item = "Large Bottle worth 50c"
+                self._moneyTotal += 0.50
 
+            self._bottleVal += 1
+            inserted = "You inserted: " + item
+            self._whatWasInserted.place_forget()
+            self._whatWasInserted.config(text=inserted)
+            self._whatWasInserted.place(relx=0.5, rely=0.1, anchor=tkinter.CENTER, bordermode='outside')
             self._totalLabel.config(text=self._moneyTotal)
             self._bottleCounter.config(text=self._bottleVal)
         else:
             print("not a bottle")
-            self._emptyLabel.place_forget()
             self._notabottleLabel.place(relx=0.5, rely=0.1, anchor=tkinter.CENTER, bordermode='outside')
 
     def loginPage(self):
