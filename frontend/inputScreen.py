@@ -11,18 +11,18 @@ class inputScreen:
         self.loadImages()
         self._machine = machine
         self._root = root
-        self._inputFrame = tkinter.Frame(self._root, height=900, width=1600, background='white')
+        self._inputFrame = tkinter.Frame(self._root, height=900, width=1600, background='lightgrey')
         self._bottleLabelImage = ""
         self._canLabelImage = ""
         self._moneyTotal = 0
         self._bottleVal = 0
-        self._bottleCounter = tkinter.Label(self._inputFrame, text="0", background='white', font=("Helvetica", 40))
-        self._totalLabel = tkinter.Label(self._inputFrame, text="0.00", background='white', font=("Helvetica", 50))
-        self._whatWasInserted = tkinter.Label(self._inputFrame, text="", background='white', font=("Helvetica", 25))
-        self._emptyLabel = tkinter.Label(self._inputFrame, text="Please enter at least 1 container", background='white', font=("Helvetica", 35), fg="red")
+        self._bottleCounter = tkinter.Label(self._inputFrame, text="0", background='lightgrey', font=("Calibri", 40))
+        self._totalLabel = tkinter.Label(self._inputFrame, text="0.00", background='lightgrey', font=("Calibri", 50))
+        self._whatWasInserted = tkinter.Label(self._inputFrame, text="", background='lightgrey', font=("Calibri", 25))
+        self._emptyLabel = tkinter.Label(self._inputFrame, text="Please enter at least 1 container", background='lightgrey', font=("Helvetica", 35), fg="red")
         self._notabottleLabel = tkinter.Label(self._inputFrame,
                                         text="Not a valid item, please input a valid bottle or move it slightly and try again",
-                                        font=("Helvetica", 25), fg="red", background='white')
+                                        font=("Calibri", 25), fg="red", background='lightgrey')
         self._loginFrame = ""
         self._camera = cv2.VideoCapture(1)  # grab the camera
         self._kernel = np.ones((5,5),np.float32)/25
@@ -31,17 +31,17 @@ class inputScreen:
         self.loadImages()  # load images in
 
         # generate all of the items on screen
-        counterLabel = tkinter.Label(self._inputFrame, text="Current Total:", background='white',
-                                     font=("Helvetica", 45))
-        bottleImageLabel = tkinter.Label(self._inputFrame, text="???", image=self._bottleLabelImage, background='white')
-        canImageLabel = tkinter.Label(self._inputFrame, text="??????", image=self._canLabelImage, background='white')
-        canCounter = tkinter.Label(self._inputFrame, text="0", background='white', font=("Helvetica", 40))
-        bufferX = tkinter.Label(self._inputFrame, text="", background='white', padx=200)
-        bufferY = tkinter.Label(self._inputFrame, text="", background='white', pady=80)
-        addBottle = tkinter.Button(self._inputFrame, text="Check Inserted Item!", padx=50, pady=25,
-                                   command=self.addBottles)
-        finishButton = tkinter.Button(self._inputFrame, text="Finish Inserting", padx=50, pady=25,
-                                      command=self.loginPage)
+        counterLabel = tkinter.Label(self._inputFrame, text="Current Total:", background='lightgrey',
+                                     font=("Calibri", 45))
+        bottleImageLabel = tkinter.Label(self._inputFrame, text="???", image=self._bottleLabelImage, background='lightgrey')
+        canImageLabel = tkinter.Label(self._inputFrame, text="??????", image=self._canLabelImage, background='lightgrey')
+        canCounter = tkinter.Label(self._inputFrame, text="0", background='lightgrey', font=("Calibri", 40))
+        bufferX = tkinter.Label(self._inputFrame, text="", background='lightgrey', padx=200)
+        bufferY = tkinter.Label(self._inputFrame, text="", background='lightgrey', pady=40)
+        addBottle = tkinter.Button(self._inputFrame, text="Check Inserted Item!", padx=50, pady=15,
+                                   command=self.addBottles, font=("Calibri, 35"))
+        finishButton = tkinter.Button(self._inputFrame, text="Finish Inserting", padx=50, pady=15,
+                                      command=self.loginPage, font=("Calibri, 35"))
 
         # draw the items on a grid
         bufferY.grid(row=0, column=0)
@@ -136,7 +136,7 @@ class inputScreen:
         if self._moneyTotal == 0:
             self._emptyLabel.place(relx=0.5, rely=0.1, anchor=tkinter.CENTER, bordermode='outside')
         else:
-            self._loginFrame = tkinter.Frame(self._root, height=900, width=1600, background='white')
+            self._loginFrame = tkinter.Frame(self._root, height=900, width=1600, background='lightgrey')
             self._inputFrame.destroy()
 
     def getLoginFrame(self):

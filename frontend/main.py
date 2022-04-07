@@ -17,15 +17,15 @@ import numpy as np
 def firstScreen():
     global startButtonImage
     global startFrame
-    startFrame = tkinter.Frame(root, height=900, width=1600, background='white')
+    startFrame = tkinter.Frame(root, height=900, width=1600, background='lightgrey')
     startButtonImage = Image.open('assets/start.png')
     startButtonImage = ImageTk.PhotoImage(startButtonImage)
 
     startButton = tkinter.Button(startFrame, image=startButtonImage, text="???", command=inputs)
     startButton.place(relx=0.5, rely=0.5, anchor=tkinter.CENTER)
 
-    text = tkinter.Label(startFrame, text="Press Start to begin return process!", background='white',
-                         font=("Helvetica", 50))
+    text = tkinter.Label(startFrame, text="Press Start to begin return process!", background='lightgrey',
+                         font=("Calibri", 50))
     text.place(relx=0.5, rely=0.25, anchor=tkinter.CENTER)
 
     startFrame.pack()
@@ -97,7 +97,7 @@ if __name__ == '__main__':
     s = ttk.Style()
     s.theme_use('winnative')
     root.wm_geometry("1600x900")
-    root.configure(background="white")
+    root.configure(background="lightgrey")
     root.title("Reverse Vending Machine")
     firstScreen()
 
