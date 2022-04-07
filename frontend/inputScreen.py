@@ -81,7 +81,6 @@ class inputScreen:
         layerOutputs = net.forward(ln)
 
         classIDs = []
-        classes = self._machine.get_classes()
 
         for output in layerOutputs:
             for detection in output:
@@ -90,7 +89,8 @@ class inputScreen:
                 confidence = scores[classID]
 
                 if confidence > 0.7:
-                    classIDs.append(classID)
+                    if classID == 39:
+                        classIDs.append(classID)
 
         print(type(classIDs))
         if not classIDs:
@@ -98,9 +98,10 @@ class inputScreen:
 
         print(classIDs)
 
-        mostLikelyItem = classes[classIDs[0]]
-        if mostLikelyItem == "bottle":
+        mostLikelyItem = classIDs[0]
+        if mostLikelyItem == 39:
             print("is bottle")
+            # here check length of bottle to
             self._emptyLabel.place_forget()
             self._notabottleLabel.place_forget()
             self._moneyTotal += 0.25

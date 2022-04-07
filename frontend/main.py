@@ -87,13 +87,12 @@ def createDNNnetwork():
 if __name__ == '__main__':
     global root
     root = tkinter.Tk()
-    classes = open('assets/yolo/coco.names').read().strip().split('\n')
 
     jwt = fetchJWT()
 
     network = createDNNnetwork()
 
-    thisMachine = machine.Machine(jwt, network[0], network[1], classes)  # create a machine class
+    thisMachine = machine.Machine(jwt, network[0], network[1])  # create a machine class
 
     s = ttk.Style()
     s.theme_use('winnative')
